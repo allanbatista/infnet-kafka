@@ -2,6 +2,8 @@ FROM ubuntu:18.04
 
 LABEL mantainer="Allan Batista <allan@allanbatista.com.br>"
 
+EXPOSE 9092
+
 # no interaction
 ENV DEBIAN_FRONTEND noninteractive
 ENV TERM linux
@@ -14,6 +16,7 @@ ENV LC_CTYPE en_US.UTF-8
 ENV LC_MESSAGES en_US.UTF-8
 
 ENV KAFKA_HOME=/kafka
+ENV KAFKA_LOG_DIR=/kafka/log
 
 # Install Deps
 RUN apt-get update \
@@ -35,4 +38,4 @@ COPY entrypoint.sh /
 COPY parse_envs.py /
 RUN chmod +x /entrypoint.sh
 
-ENTRYPOINT [ "/entrypoint.sh" ]
+ENTRYPOINT [ "/entrypoint.sh", "server" ]

@@ -71,7 +71,7 @@ services:
 
   kafka1:
     command: kafka-server
-    image: kafka-image
+    image: allanbatista/
     restart: unless-stopped
     hostname: kafka1
     ports:

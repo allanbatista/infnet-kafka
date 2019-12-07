@@ -16,6 +16,9 @@ for key in environ:
     if key.startswith("kafka."):
         envvars[key.replace("kafka.", "")] = environ[key]
 
+if environ.get('KAFKA_LOG_DIR'):
+    envvars['log.dir'] = environ.get('KAFKA_LOG_DIR')
+
 
 with open("{}/config/server-generated.properties".format(environ['KAFKA_HOME']), "w+") as f:
     for key in envvars:
