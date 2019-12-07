@@ -1,0 +1,130 @@
+version: '3.1'
+
+networks:
+  cluster-kafka:
+    driver: bridge
+#   zookeeper-cluster:
+#     driver: bridge
+#   kafka-cluster:
+#     driver: bridge 
+
+services:
+  zoo1:
+    image: zookeeper
+    restart: always
+    hostname: zoo1
+    ports:
+      - 2181:2181
+    environment:
+      ZOO_MY_ID: 1
+      ZOO_SERVERS: server.1=0.0.0.0:2888:3888;2181 server.2=zoo2:2888:3888;2181 server.3=zoo3:2888:3888;2181
+    networks:
+      - cluster-kafka
+
+  zoo2:
+    image: zookeeper
+    restart: always
+    hostname: zoo2
+    ports:
+      - 2182:2181
+    environment:
+      ZOO_MY_ID: 2
+      ZOO_SERVERS: server.1=zoo1:2888:3888;2181 server.2=0.0.0.0:2888:3888;2181 server.3=zoo3:2888:3888;2181
+    networks:
+      - cluster-kafka
+
+  zoo3:
+    image: zookeeper
+    restart: always
+    hostname: zoo3
+    ports:
+      - 2183:2181
+    environment:
+      ZOO_MY_ID: 3
+      ZOO_SERVERS: server.1=zoo1:2888:3888;2181 server.2=zoo2:2888:3888;2181 server.3=0.0.0.0:2888:3888;2181
+    networks:
+      - cluster-kafka
+
+
+  kafka-image:
+    build: ./docker-dafka
+
+  kafka0:
+    command: kafka-server
+    image: kafka-image
+    restart: unless-stopped
+    hostname: kafka0
+    ports:
+      -  9092:9092
+    environment:
+      kafka.broker.id: 0
+      kafka.zookeeper.connect: zoo1:2181,zoo2:2181,zoo3:2181
+      kafka.advertised.listeners: PLAINTEXT://kafka0:9092
+      kafka.num.partitions: 3
+      kafka.offsets.topic.replication.factor: 3
+    depends_on:
+      - zoo1
+      - zoo2
+      - zoo3
+    networks:
+      - cluster-kafka
+
+  kafka1:
+    command: kafka-server
+    image: kafka-image
+    restart: unless-stopped
+    hostname: kafka1
+    ports:
+      -  9093:9093
+    environment:
+      kafka.broker.id: 1
+      kafka.zookeeper.connect: zoo1:2181,zoo2:2181,zoo3:2181
+      kafka.advertised.listeners: PLAINTEXT://kafka1:9093
+      kafka.num.partitions: 3
+      kafka.offsets.topic.replication.factor: 3
+    depends_on:
+      - zoo1
+      - zoo2
+      - zoo3
+    networks:
+      - cluster-kafka
+
+  kafka2:
+    command: kafka-server
+    image: kafka-image
+    restart: unless-stopped
+    hostname: kafka2
+    ports:
+      -  9094:9094
+    environment:
+      kafka.broker.id: 2
+      kafka.zookeeper.connect: zoo1:2181,zoo2:2181,zoo3:2181
+      kafka.advertised.listeners: PLAINTEXT://kafka2:9094
+      kafka.num.partitions: 3
+      kafka.offsets.topic.replication.factor: 3
+    depends_on:
+      - zoo1
+      - zoo2
+      - zoo3
+    networks:
+      - cluster-kafka
+
+  kafka3:
+    command: kafka-server
+    image: kafka-image
+    restart: unless-stopped
+    hostname: kafka3
+    ports:
+      -  9095:9095
+    environment:
+      kafka.broker.id: 3
+      kafka.zookeeper.connect: zoo1:2181,zoo2:2181,zoo3:2181
+      kafka.advertised.listeners: PLAINTEXT://kafka3:9095
+      kafka.num.partitions: 3
+      kafka.offsets.topic.replication.factor: 3
+    depends_on:
+      - zoo1
+      - zoo2
+      - zoo3
+    networks:
+      - cluster-kafka
