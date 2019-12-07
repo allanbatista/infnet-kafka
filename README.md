@@ -5,9 +5,11 @@
 ## Install Docker
 
 ```
-chmod +x docker_install.sh
-sudo ./docker_install.sh
+wget https://raw.githubusercontent.com/allanbatista/infnet-kafka/master/scripts/docker-install.sh
+chmod +x install_docker.sh
+sudo ./install_docker.sh
 ```
 
 ## Zookeper
+
 
